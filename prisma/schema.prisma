@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id    String @id @default(uuid())
+  sku   String @unique
+  name  String
+  price Float
+  type  String
+
+  created_at DateTime    @default(now())
+  Dimension  Dimension[]
+  Size       Size[]
+  Weight     Weight[]
+
+  @@map("products")
+}
+
+model Dimension {
+  product_id String  @id
+  height     Decimal
+  width      Decimal
+  length     Decimal
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_dimensions")
+}
+
+model Size {
+  product_id String  @id
+  size       Decimal
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_sizes")
+}
+
+model Weight {
+  product_id String  @id
+  weight     Decimal
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_weights")
+}
